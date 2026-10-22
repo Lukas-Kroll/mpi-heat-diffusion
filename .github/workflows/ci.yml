@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     env:
       OMPI_MCA_rmaps_base_oversubscribe: "1"
@@ -19,10 +19,12 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v7
 
+      - name: Update packages list
+        run: sudo apt-get update
+
       - name: Install dependencies
         run: | 
-          sudo apt-get update 
-          sudo apt-get install -y \
+          sudo apt-get install --no-install-recommends -y \
           cmake \ 
           g++ \
           openmpi-bin \
