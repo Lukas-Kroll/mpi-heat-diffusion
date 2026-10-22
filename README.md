@@ -222,6 +222,11 @@ For these measurements, the four-process MPI run was approximately 3.6–4.0 tim
 
 Some minimum/maximum measurements showed substantial variation, and calculated parallel efficiency was slightly above 100% for a few configurations. These values should not be interpreted as a guarantee of superlinear scaling; cache effects, system scheduling and measurement noise can affect comparisons between separate serial and MPI runs. Medians are reported instead of best-case times.
 
+![Heatmap visualization](results/heatmap.png)
+
+The heatmap shows the final temperature distribution
+after 2000 simulation iterations on a 250 × 250 grid.
+
 ## Project layout
 
 ```text
