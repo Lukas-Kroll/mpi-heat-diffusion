@@ -58,15 +58,29 @@ target_link_libraries(heat_sim_mpi
 
 enable_warnings(heat_sim_mpi)
 
+
 include(CTest)
 
 if(BUILD_TESTING)
-    add_executable(test_mpiHeatPlate
-            tests/test_mpiHeatPlate.cpp
+    # Serial tests
+    add_executable(test_heatPlate
+            tests/test_heatPlate.cpp
     )
+
+    target_link_libraries(test_heatPlate
+            PRIVATE heatPlate
+    )
+
+    enable_warnings(test_heatPlate)
+
     add_test(
             NAME heat_plate_tests
-            COMMAND test_heatPlate
+            COMMAND $<TARGET_FILE:test_heatPlate>
+    )
+
+    # MPI tests
+    add_executable(test_mpiHeatPlate
+            tests/test_mpiHeatPlate.cpp
     )
 
     target_link_libraries(test_mpiHeatPlate
