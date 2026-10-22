@@ -1,0 +1,17 @@
+/build/
+/build-release/
+/cmake-build-*/
+
+/.venv/
+/.venv-windows/
+__pycache__/
+*.py[cod]
+
+.idea/
+CMakeUserPresets.json
+
+results.csv
+serial_results.csv
+mpi_results*.csv
+benchmark_results.csv
+benchmark_comparison.csv
