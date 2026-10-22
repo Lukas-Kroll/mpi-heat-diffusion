@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: | 
           sudo apt-get install --no-install-recommends -y \
-          cmake \ 
+          cmake \
           g++ \
           openmpi-bin \
           libopenmpi-dev
