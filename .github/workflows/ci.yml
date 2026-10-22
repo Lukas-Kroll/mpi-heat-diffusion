@@ -16,26 +16,26 @@ jobs:
     OMPI_MCA_rmaps_base_oversubscribe: "1"
 
   steps:
-    -name: Check out repo
-    -uses: actions/checkout@v7
+    - name: Check out repo
+      uses: actions/checkout@v7
 
-    -name: Install dependencies
-    run: | 
-      sudo apt-get update 
-      sudo apt-get install -y \
-      cmake \ 
-      g++ \
-      openmpi-bin \
-      libopenmpi-dev
+    - name: Install dependencies
+      run: | 
+        sudo apt-get update 
+        sudo apt-get install -y \
+        cmake \ 
+        g++ \
+        openmpi-bin \
+        libopenmpi-dev
 
-    -name: Configure CMake
-    run: |
-      cmake -S . -B build \
-      -DCMAKE_BUILD_TYPE=Release \
-      -DBUILD_TESTING=ON
+    - name: Configure CMake
+      run: |
+        cmake -S . -B build \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBUILD_TESTING=ON
 
-    -name: Build
-    run: cmake --build build --parallel 2
+    - name: Build
+      run: cmake --build build --parallel 2
 
-    -name: Run tests
-    run: ctest --test-dir build --output-on-failure
+    - name: Run tests
+      run: ctest --test-dir build --output-on-failure
