@@ -262,6 +262,17 @@ The following measurements were collected in a local WSL environment using a Rel
 | 750 × 750 | 361.845 ms | 349.715 ms | 184.594 ms | 92.608 ms | 3.91× |
 | 1000 × 1000 | 767.644 ms | 704.011 ms | 367.988 ms | 194.175 ms | 3.95× |
 
+### Speedup with 4 processes: two baselines
+
+| Grid | vs. serial | vs. MPI with 1 process |
+| :--- | ---: | ---: |
+| 250 × 250 | 3.84× | 3.87× |
+| 500 × 500 | 3.62× | 3.92× |
+| 750 × 750 | 3.91× | 3.78× |
+| 1000 × 1000 | 3.95× | 3.63× |
+
+The serial executable and the MPI executable with one process differ slightly in runtime (for 1000 × 1000 the MPI run was faster than the serial one). To separate parallel scaling from implementation differences, speedup is also reported relative to the MPI run with one process. Both baselines give a four-process speedup of roughly 3.6× to 3.9×.
+
 The speedup is calculated as:
 
 $$
