@@ -303,6 +303,15 @@ Some individual measurements varied considerably, and calculated parallel effici
 
 The results describe the local test environment and should not be treated as guaranteed performance on other systems.
 
+## Continuous integration
+
+The project is built and tested automatically on two CI systems:
+
+- **GitHub Actions** (`.github/workflows/ci.yml`): Ubuntu 24.04 runner, CMake build, CTest.
+- **GitLab CI** (`.gitlab-ci.yml`): `ubuntu:24.04` container, installs the toolchain and Open MPI, builds in Release mode, and runs CTest (serial test plus MPI runs with 1, 2 and 4 ranks).
+
+Notes: MPI tests use more ranks than the runner may have cores, so oversubscription is enabled via `OMPI_MCA_rmaps_base_oversubscribe`. In the GitLab job the tests run as root inside a throwaway container, which Open MPI only permits with `OMPI_ALLOW_RUN_AS_ROOT` and `OMPI_ALLOW_RUN_AS_ROOT_CONFIRM`.
+
 ## Project structure
 
 ```text
