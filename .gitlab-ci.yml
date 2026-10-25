@@ -6,7 +6,7 @@ variables:
 build-and-test:
   script:
     - apt-get update
-    - apt-get install --no-install-recommends -y cmake g++ openmpi-bin libopenmpi-dev
+    - apt-get install --no-install-recommends -y build-essential cmake openmpi-bin libopenmpi-dev
     - cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
     - cmake --build build --parallel 2
     - ctest --test-dir build --output-on-failure
