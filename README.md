@@ -104,11 +104,16 @@ OMPI_MCA_rmaps_base_oversubscribe=1 \
   ctest --test-dir build-release --output-on-failure
 ```
 
-The test suite includes a serial test and MPI tests using 1, 2 and 4 processes.
+CTest runs four tests:
+
+- **`heat_plate_tests`** (serial solver): checks the initial state, a single iteration against hand-computed values (center and four neighbours become 20 for `alpha = 0.20` and an initial temperature of 100), zero iterations, fixed zero boundaries, and input validation (grid smaller than 3, unstable `alpha`, non-finite temperature, hot region that does not fit, out-of-range access, size overflow).
+- **`mpi_heat_plate_np1`, `_np2`, `_np4`** (MPI solver on 1, 2 and 4 ranks): runs the MPI solver, gathers the grid on rank 0 and compares every cell with the serial solver (absolute tolerance `1e-12`). The cases use grid sizes whose row count is not divisible by the number of ranks (101 × 97, 17 × 13, 18 × 11) and iteration counts of 23, 1 and 0.
+
+Because the MPI tests compare against the serial solver, CI also guards against regressions in the parallel decomposition and ghost-row exchange.
 
 ## Verify serial and MPI results
 
-Run both versions with identical simulation parameters:
+The automated MPI tests already compare both solvers on small grids. For larger runs you can also compare the CSV outputs manually:
 
 ```bash
 ./build-release/heat_sim \
