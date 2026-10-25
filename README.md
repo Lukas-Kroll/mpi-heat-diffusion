@@ -1,4 +1,3 @@
-
 # MPI Heat Diffusion
 
 A C++20 implementation of a two-dimensional heat-diffusion simulation with both a serial solver and an MPI-parallel solver. The project includes automated tests, numerical result comparison, performance benchmarks and Python visualisation tools.
@@ -12,7 +11,7 @@ A C++20 implementation of a two-dimensional heat-diffusion simulation with both 
 - Automated tests with CTest, including MPI runs with 1, 2 and 4 processes.
 - Repeated performance benchmarks with median runtime, speedup and parallel efficiency.
 - Python tools for heatmap visualisation and benchmark plots.
-- GitHub Actions continuous integration for building and testing.
+- Continuous integration on GitHub Actions and GitLab CI (build and CTest, including MPI runs).
 
 ## Requirements
 
@@ -170,6 +169,12 @@ python python/plot_heatmap.py \
 
 The temperature distribution illustrates how heat spreads from the initial hot region over time. The boundaries remain at zero temperature.
 
+## Performance benchmarks
+
+The benchmark scripts compare the serial solver with MPI runs using different process counts.
+
+Build the Release executables before benchmarking.
+
 ### Benchmark environment
 
 | Component | Details |
@@ -185,12 +190,6 @@ The temperature distribution illustrates how heat spreads from the initial hot r
 | Python | 3.12.3 |
 
 Notes: WSL 2 reports 8 cores with 2 threads each, but the CPU has a hybrid architecture (performance and efficiency cores). MPI processes were not pinned to specific cores, so placement is decided by the Windows scheduler, which may contribute to run-to-run variance. Measurements were taken on a laptop in a WSL 2 virtual machine and should be understood as indicative rather than as a controlled HPC benchmark.
-
-## Performance benchmarks
-
-The benchmark scripts compare the serial solver with MPI runs using different process counts.
-
-Build the Release executables before benchmarking.
 
 ### Serial benchmark
 
@@ -253,7 +252,7 @@ The script generates two images:
 
 ## Recorded benchmark results
 
-The following measurements were collected in a local WSL environment using a Release build, 500 iterations per simulation, 2 warm-up runs and 10 measured repetitions. The table reports median runtimes.
+The following measurements were collected in the WSL environment described above using a Release build, 500 iterations per simulation, 2 warm-up runs and 10 measured repetitions. The table reports median runtimes.
 
 | Grid | Serial median | MPI 1 median | MPI 2 median | MPI 4 median | Speedup with 4 processes |
 |---|---:|---:|---:|---:|---:|
@@ -264,14 +263,12 @@ The following measurements were collected in a local WSL environment using a Rel
 
 ### Speedup with 4 processes: two baselines
 
-| Grid | vs. serial | vs. MPI with 1 process |
-| :--- | ---: | ---: |
-| 250 × 250 | 3.84× | 3.87× |
-| 500 × 500 | 3.62× | 3.92× |
-| 750 × 750 | 3.91× | 3.78× |
-| 1000 × 1000 | 3.95× | 3.63× |
-
-The serial executable and the MPI executable with one process differ slightly in runtime (for 1000 × 1000 the MPI run was faster than the serial one). To separate parallel scaling from implementation differences, speedup is also reported relative to the MPI run with one process. Both baselines give a four-process speedup of roughly 3.6× to 3.9×.
+| Grid | vs. serial | vs. MPI with 1 process | Efficiency (vs. serial) |
+| :--- | ---: | ---: | ---: |
+| 250 × 250 | 3.84× | 3.87× | 96.0 % |
+| 500 × 500 | 3.62× | 3.92× | 90.6 % |
+| 750 × 750 | 3.91× | 3.78× | 97.7 % |
+| 1000 × 1000 | 3.95× | 3.63× | 98.8 % |
 
 The speedup is calculated as:
 
@@ -295,11 +292,11 @@ $$
 
 ### Results interpretation
 
-In these measurements, the four-process MPI solver achieved a speedup of approximately 3.6× to 4.0×. The two-process version was approximately twice as fast as the serial solver.
+In these measurements, the four-process MPI solver achieved a speedup between 3.6× and 3.95× over the serial solver, and between 3.6× and 3.9× relative to the single-process MPI run. The two-process version was approximately twice as fast as the serial solver.
 
-MPI with one process was not consistently faster than the serial executable. This is expected to be possible because MPI introduces additional overhead.
+With a single process, the MPI executable was slower than the serial executable for the two smaller grids (by up to about 8 % for 500 × 500) and faster for the two larger ones (by up to about 8 % for 1000 × 1000). Since both run the same stencil on one core, this difference points to implementation or measurement effects rather than to MPI itself; it was not investigated further. Speedups relative to the single-process MPI run are therefore listed as well.
 
-Some individual measurements varied considerably, and calculated parallel efficiency was slightly above 100% for a few configurations. Such values are not a guarantee of superlinear scaling; cache effects, scheduling and measurement noise can influence the comparison. Median runtimes are therefore reported instead of best-case times.
+Some individual measurements varied considerably, and parallel efficiency relative to the serial solver was slightly above 100 % for some configurations (for example about 104 % for 1000 × 1000 with two processes). Such values are not a guarantee of superlinear scaling; cache effects, scheduling and measurement noise can influence the comparison. Median runtimes are therefore reported instead of best-case times.
 
 The results describe the local test environment and should not be treated as guaranteed performance on other systems.
 
@@ -308,7 +305,7 @@ The results describe the local test environment and should not be treated as gua
 The project is built and tested automatically on two CI systems:
 
 - **GitHub Actions** (`.github/workflows/ci.yml`): Ubuntu 24.04 runner, CMake build, CTest.
-- **GitLab CI** (`.gitlab-ci.yml`): `ubuntu:24.04` container, installs the toolchain and Open MPI, builds in Release mode, and runs CTest (serial test plus MPI runs with 1, 2 and 4 ranks).
+- **GitLab CI** (`.gitlab-ci.yml`, [GitLab project](https://gitlab.com/my-projects5070043/mpi-heat-diffusion)): `ubuntu:24.04` container, installs the toolchain and Open MPI, builds in Release mode, and runs CTest (serial test plus MPI runs with 1, 2 and 4 ranks).
 
 Notes: MPI tests use more ranks than the runner may have cores, so oversubscription is enabled via `OMPI_MCA_rmaps_base_oversubscribe`. In the GitLab job the tests run as root inside a throwaway container, which Open MPI only permits with `OMPI_ALLOW_RUN_AS_ROOT` and `OMPI_ALLOW_RUN_AS_ROOT_CONFIRM`.
 
@@ -317,19 +314,16 @@ Notes: MPI tests use more ranks than the runner may have cores, so oversubscript
 ```text
 .
 ├── .github/workflows/   # GitHub Actions workflow
+├── .gitlab-ci.yml       # GitLab CI pipeline
 ├── include/             # Public C++ headers
 ├── python/              # Visualisation and analysis tools
 ├── scripts/             # Benchmark scripts
 ├── src/                 # Serial and MPI implementations
 ├── tests/               # Serial and MPI tests
 ├── results/             # Benchmark data and generated figures
-└── CMakeLists.txt        # Build targets and CTest registration
+└── CMakeLists.txt       # Build targets and CTest registration
 ```
 
 ## Implementation notes
 
 The grid is updated iteratively using a five-point finite-difference stencil. The MPI implementation distributes rows across processes and exchanges neighbouring boundary rows so that each process can update its local subdomain. The final grid can be gathered on rank 0 and written to CSV.
-
-## Continuous integration
-
-GitHub Actions configures the project with CMake, builds the C++ targets and runs CTest on Ubuntu with OpenMPI. This helps catch build and correctness regressions when the code changes.
