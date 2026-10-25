@@ -248,17 +248,23 @@ The following measurements were collected in a local WSL environment using a Rel
 
 The speedup is calculated as:
 
-\[
+$$
 S_p = \frac{T_{\mathrm{serial}}}{T_{\mathrm{MPI},p}}
-\]
+$$
 
-where \(T_{\mathrm{serial}}\) is the serial median runtime and \(T_{\mathrm{MPI},p}\) is the MPI median runtime using \(p\) processes.
+where $T_{\mathrm{serial}}$ is the serial median runtime and $T_{\mathrm{MPI},p}$ is the MPI median runtime using $p$ processes.
 
 Parallel efficiency is calculated as:
 
-\[
+$$
 E_p = \frac{S_p}{p}
-\]
+$$
+
+Speedup relative to the single-process MPI run (to separate parallel scaling from differences between the serial and MPI implementations) is:
+
+$$
+S_p^{(1)} = \frac{T_{\mathrm{MPI},1}}{T_{\mathrm{MPI},p}}
+$$
 
 ### Results interpretation
 
