@@ -1,0 +1,12 @@
+image: ubuntu:24.04
+
+variables:
+  OMPI_MCA_rmaps_base_oversubscribe: "1"
+
+build-and-test:
+  script:
+    - apt-get update
+    - apt-get install --no-install-recommends -y cmake g++ openmpi-bin libopenmpi-dev
+    - cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
+    - cmake --build build --parallel 2
+    - ctest --test-dir build --output-on-failure
