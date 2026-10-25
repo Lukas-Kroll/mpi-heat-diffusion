@@ -170,6 +170,22 @@ python python/plot_heatmap.py \
 
 The temperature distribution illustrates how heat spreads from the initial hot region over time. The boundaries remain at zero temperature.
 
+### Benchmark environment
+
+| Component | Details |
+| :--- | :--- |
+| CPU | Intel Core i5-12500H (4 performance + 8 efficiency cores, 16 hardware threads) |
+| Memory visible to WSL | 7.6 GiB |
+| Host OS | Windows 11 (build 26200) |
+| WSL | WSL 2 (2.6.1.0), kernel 6.6.87.2-microsoft-standard-WSL2 |
+| Distribution | Ubuntu 24.04.3 LTS |
+| Compiler | GCC 13.3.0 (`-O3` via CMake Release build) |
+| MPI | Open MPI 4.1.6 |
+| Build tools | CMake 3.28.3 |
+| Python | 3.12.3 |
+
+Notes: WSL 2 reports 8 cores with 2 threads each, but the CPU has a hybrid architecture (performance and efficiency cores). MPI processes were not pinned to specific cores, so placement is decided by the Windows scheduler, which may contribute to run-to-run variance. Measurements were taken on a laptop in a WSL 2 virtual machine and should be understood as indicative rather than as a controlled HPC benchmark.
+
 ## Performance benchmarks
 
 The benchmark scripts compare the serial solver with MPI runs using different process counts.
